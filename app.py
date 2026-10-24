@@ -2,7 +2,6 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-from streamlit_autorefresh import st_autorefresh
 
 # ==========================================
 # SIMULADOR DE RESERVORIO PARABÓLICO
@@ -34,14 +33,12 @@ def porcentaje_lleno(h):
     return 100 * (h / H)**2
 
 
-
 def trabajo_acumulado(h):
     W = (
         rho * g * np.pi * R**2 / H
         * (H**3 / 6 - H * h**2 / 2 + h**3 / 3)
     )
-    return np.maximum(0.0, W)
-
+    return max(0.0, W)
 
 
 V_total = np.pi * R**2 * H / 2
@@ -60,74 +57,6 @@ st.markdown(
     "la geometría, el volumen restante y el trabajo acumulado."
 )
 
-# ----- CONTROLES DE ANIMACIÓN DEL VACIADO -----
-
-# Inicializar el nivel del agua y el estado de la animación
-if "nivel_agua_anim" not in st.session_state:
-    st.session_state["nivel_agua_anim"] = float(H)
-
-if "vaciado_en_marcha" not in st.session_state:
-    st.session_state["vaciado_en_marcha"] = False
-
-
-# Función para iniciar el vaciado
-def iniciar_vaciado():
-    if st.session_state["nivel_agua_anim"] <= 0:
-        st.session_state["nivel_agua_anim"] = float(H)
-
-    st.session_state["vaciado_en_marcha"] = True
-
-
-# Función para pausar el vaciado
-def pausar_vaciado():
-    st.session_state["vaciado_en_marcha"] = False
-
-
-# Función para reiniciar el reservorio
-def reiniciar_vaciado():
-    st.session_state["vaciado_en_marcha"] = False
-    st.session_state["nivel_agua_anim"] = float(H)
-
-
-# Crear los tres botones
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.button(
-        "▶ Iniciar",
-        on_click=iniciar_vaciado,
-        key="btn_iniciar_vaciado"
-    )
-
-with col2:
-    st.button(
-        "⏸ Pausar",
-        on_click=pausar_vaciado,
-        key="btn_pausar_vaciado"
-    )
-
-with col3:
-    st.button(
-        "↺ Reiniciar",
-        on_click=reiniciar_vaciado,
-        key="btn_reiniciar_vaciado"
-    )
-
-
-# Animación automática del nivel del agua
-if st.session_state["vaciado_en_marcha"]:
-    nuevo_nivel = (
-        float(st.session_state["nivel_agua_anim"])
-        - float(H) / 35
-    )
-
-    st.session_state["nivel_agua_anim"] = max(
-        0.0, nuevo_nivel
-    )
-
-    if st.session_state["nivel_agua_anim"] <= 0.0:
-        st.session_state["nivel_agua_anim"] = 0.0
-        st.session_state["vaciado_en_marcha"] = False
 # 4. Control interactivo del nivel
 
 st.sidebar.header("Control del reservorio")
@@ -135,10 +64,9 @@ st.sidebar.header("Control del reservorio")
 h = st.sidebar.slider(
     "Nivel actual del agua (m)",
     min_value=0.0,
-    max_value=float(H),
-    step=0.05,
-    key="nivel_agua_anim",
-    disabled=st.session_state["vaciado_en_marcha"]
+    max_value=H,
+    value=H,
+    step=0.05
 )
 
 r_agua = radio_superficie(h)
@@ -324,6 +252,11 @@ with st.expander("Consultar el modelo matemático"):
         "El trabajo es mecánico ideal; no representa el consumo "
         "eléctrico de una bomba real."
     )
+
+st.caption(
+    "Proyecto académico de Cálculo Integral. "
+    "Dimensiones del modelo: radio 3 m y altura 2 m."
+)
 
 st.caption(
     "Proyecto académico de Cálculo Integral. "
