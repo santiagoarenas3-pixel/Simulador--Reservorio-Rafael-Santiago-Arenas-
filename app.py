@@ -103,13 +103,24 @@ with col_reinicio:
         key="btn_reiniciar_vaciado"
     )
 
+# Indicador del estado del reservorio
+
+nivel_actual = float(st.session_state["nivel_agua_anim"])
+
 if st.session_state["vaciado_en_marcha"]:
-    st.info(
-        "Control activado. El movimiento automático "
-        "se conectará en el siguiente paso."
+    st.info("🔄 Estado: Vaciado en curso")
+
+elif nivel_actual <= 0.0:
+    st.warning(
+        "Reservorio vacío. Pulsa Iniciar "
+        "para comenzar un nuevo ciclo."
     )
+
 else:
-    st.caption("Estado: pausado.")
+    st.caption(
+        f"⏸ Estado: Pausado | "
+        f"Nivel actual: {nivel_actual:.2f} m"
+    )
 # 4. Modelo interactivo dentro de un fragmento
 
 if "nivel_agua_anim" not in st.session_state:
