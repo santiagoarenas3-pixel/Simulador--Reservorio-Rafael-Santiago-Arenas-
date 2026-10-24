@@ -64,8 +64,10 @@ if "vaciado_en_marcha" not in st.session_state:
 
 
 def iniciar_vaciado():
-    st.session_state["vaciado_en_marcha"] = True
+    if st.session_state["nivel_agua_anim"] <= 0.0:
+        st.session_state["nivel_agua_anim"] = float(H)
 
+    st.session_state["vaciado_en_marcha"] = True
 
 def pausar_vaciado():
     st.session_state["vaciado_en_marcha"] = False
@@ -114,8 +116,29 @@ if "nivel_agua_anim" not in st.session_state:
     st.session_state["nivel_agua_anim"] = float(H)
 
 
-@st.fragment
+run_every = (
+    "1s"
+    if st.session_state["vaciado_en_marcha"]
+    else None
+)
+
+@st.fragment(run_every=run_every)
 def mostrar_reservorio():
+
+    # Actualización automática del nivel
+    if st.session_state["vaciado_en_marcha"]:
+        nuevo_nivel = max(
+            0.0,
+            float(st.session_state["nivel_agua_anim"])
+            - float(H) / 35
+        )
+
+        st.session_state["nivel_agua_anim"] = nuevo_nivel
+
+        # Detener al llegar al nivel cero
+        if nuevo_nivel <= 0.0:
+            st.session_state["vaciado_en_marcha"] = False
+            st.rerun()
 
     # Control del nivel de agua
     st.sidebar.header("Control del reservorio")
