@@ -466,7 +466,7 @@ def generar_csv_resultados():
         "Trabajo acumulado (kJ)"
     ])
 
-    # Calcular resultados para cada altura
+        # Calcular resultados para cada altura
     for altura in alturas:
         radio = float(radio_superficie(altura))
         volumen = float(volumen_restante(altura))
@@ -475,14 +475,13 @@ def generar_csv_resultados():
         volumen_extraido = max(0.0, V_total - volumen)
 
         escritor.writerow([
-            f"{altura:.2f}",
-            f"{radio:.4f}",
-            f"{volumen:.4f}",
-            f"{llenado:.2f}",
-            f"{volumen_extraido:.4f}",
-            f"{trabajo / 1000:.4f}"
+            f"{altura:.2f}".replace(".", ","),
+            f"{radio:.4f}".replace(".", ","),
+            f"{volumen:.4f}".replace(".", ","),
+            f"{llenado:.2f}".replace(".", ","),
+            f"{volumen_extraido:.4f}".replace(".", ","),
+            f"{trabajo / 1000:.4f}".replace(".", ",")
         ])
-
     # Facilitar la lectura de caracteres españoles en Excel
     return "\ufeff" + salida.getvalue()
 
