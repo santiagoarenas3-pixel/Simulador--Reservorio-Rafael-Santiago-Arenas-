@@ -105,6 +105,9 @@ with col_reinicio:
 
 # Indicador del estado del reservorio
 
+if "nivel_agua_anim" not in st.session_state:
+    st.session_state["nivel_agua_anim"] = float(H)
+    
 nivel_actual = float(st.session_state["nivel_agua_anim"])
 
 if st.session_state["vaciado_en_marcha"]:
