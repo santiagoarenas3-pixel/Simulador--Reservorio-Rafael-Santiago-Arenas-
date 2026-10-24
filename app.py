@@ -60,14 +60,17 @@ st.markdown(
 
 # 4. Control interactivo del nivel
 
+if "nivel_agua_anim" not in st.session_state:
+    st.session_state["nivel_agua_anim"] = float(H)
+
 st.sidebar.header("Control del reservorio")
 
 h = st.sidebar.slider(
     "Nivel actual del agua (m)",
     min_value=0.0,
-    max_value=H,
-    value=H,
-    step=0.05
+    max_value=float(H),
+    step=0.05,
+    key="nivel_agua_anim"
 )
 
 r_agua = radio_superficie(h)
