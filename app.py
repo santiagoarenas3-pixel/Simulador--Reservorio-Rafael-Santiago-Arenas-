@@ -116,11 +116,6 @@ with col3:
 
 # Animación automática del nivel del agua
 if st.session_state["vaciado_en_marcha"]:
-    st_autorefresh(
-        interval=1000,
-        key="refresco_vaciado"
-    )
-
     nuevo_nivel = (
         float(st.session_state["nivel_agua_anim"])
         - float(H) / 35
@@ -130,12 +125,9 @@ if st.session_state["vaciado_en_marcha"]:
         0.0, nuevo_nivel
     )
 
-    # Detener la animación cuando el reservorio esté vacío
     if st.session_state["nivel_agua_anim"] <= 0.0:
         st.session_state["nivel_agua_anim"] = 0.0
         st.session_state["vaciado_en_marcha"] = False
-# 4. Control interactivo del nivel
-
 # 4. Control interactivo del nivel
 
 st.sidebar.header("Control del reservorio")
