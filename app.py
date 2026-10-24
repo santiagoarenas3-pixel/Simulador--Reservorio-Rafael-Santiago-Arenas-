@@ -108,182 +108,183 @@ if st.session_state["vaciado_en_marcha"]:
     )
 else:
     st.caption("Estado: pausado.")
-# 4. Control interactivo del nivel
+# 4. Modelo interactivo dentro de un fragmento
 
 if "nivel_agua_anim" not in st.session_state:
     st.session_state["nivel_agua_anim"] = float(H)
 
-st.sidebar.header("Control del reservorio")
 
-h = st.sidebar.slider(
-    "Nivel actual del agua (m)",
-    min_value=0.0,
-    max_value=float(H),
-    step=0.05,
-    key="nivel_agua_anim"
-)
+@st.fragment
+def mostrar_reservorio():
 
-r_agua = radio_superficie(h)
-V = volumen_restante(h)
-llenado = porcentaje_lleno(h)
-extraido = 100 - llenado
-W = trabajo_acumulado(h)
+    # Control del nivel de agua
+    st.sidebar.header("Control del reservorio")
 
-# 5. Indicadores numéricos
-
-c1, c2, c3, c4 = st.columns(4)
-
-c1.metric("Nivel del agua", f"{h:.2f} m")
-c2.metric("Radio de la superficie", f"{r_agua:.2f} m")
-c3.metric("Volumen restante", f"{V:.2f} m³")
-c4.metric("Trabajo acumulado", f"{W / 1000:.2f} kJ")
-
-st.progress(float(np.clip(llenado / 100, 0, 1)))
-
-st.caption(
-    f"Llenado: {llenado:.1f}% | "
-    f"Agua extraída: {extraido:.1f}% | "
-    f"Capacidad total: {V_total:.2f} m³"
-)
-
-# 6. Representación tridimensional
-
-st.subheader("Geometría 3D del reservorio")
-
-theta = np.linspace(0, 2 * np.pi, 90)
-radios = np.linspace(0, R, 40)
-T, S = np.meshgrid(theta, radios)
-
-X = S * np.cos(T)
-Y = S * np.sin(T)
-Z = (H / R**2) * S**2
-
-fig = plt.figure(figsize=(9, 7))
-ax = fig.add_subplot(111, projection="3d")
-
-# Superficie del recipiente
-ax.plot_surface(
-    X, Y, Z,
-    color="#A7ADB4",
-    alpha=0.30,
-    linewidth=0.25,
-    edgecolor="gray"
-)
-
-# Superficie curva en contacto con el agua
-if h > 0:
-    radios_h = np.linspace(0, r_agua, 32)
-    Th, Sh = np.meshgrid(theta, radios_h)
-
-    Xh = Sh * np.cos(Th)
-    Yh = Sh * np.sin(Th)
-    Zh = (H / R**2) * Sh**2
-
-    ax.plot_surface(
-        Xh, Yh, Zh,
-        color="#5B9BD5",
-        alpha=0.48,
-        linewidth=0
+    h = st.sidebar.slider(
+        "Nivel actual del agua (m)",
+        min_value=0.0,
+        max_value=float(H),
+        step=0.05,
+        key="nivel_agua_anim"
     )
 
-    # Superficie horizontal del agua
-    Tw, Sw = np.meshgrid(theta, radios_h)
-    Xw = Sw * np.cos(Tw)
-    Yw = Sw * np.sin(Tw)
-    Zw = np.full_like(Xw, h)
+    # Cálculos
+    r_agua = radio_superficie(h)
+    V = volumen_restante(h)
+    llenado = porcentaje_lleno(h)
+    extraido = 100 - llenado
+    W = trabajo_acumulado(h)
 
-    ax.plot_surface(
-        Xw, Yw, Zw,
-        color="#5B9BD5",
-        alpha=0.70,
-        linewidth=0
+    # Indicadores numéricos
+    c1, c2, c3, c4 = st.columns(4)
+
+    c1.metric("Nivel del agua", f"{h:.2f} m")
+    c2.metric("Radio de la superficie", f"{r_agua:.2f} m")
+    c3.metric("Volumen restante", f"{V:.2f} m³")
+    c4.metric("Trabajo acumulado", f"{W / 1000:.2f} kJ")
+
+    st.progress(float(np.clip(llenado / 100, 0, 1)))
+
+    st.caption(
+        f"Llenado: {llenado:.1f}% | "
+        f"Agua extraída: {extraido:.1f}% | "
+        f"Capacidad total: {V_total:.2f} m³"
     )
 
-    # Circunferencia que marca el nivel del agua
+    # Modelo tridimensional
+    st.subheader("Geometría 3D del reservorio")
+
+    theta = np.linspace(0, 2 * np.pi, 90)
+    radios = np.linspace(0, R, 40)
+    T, S = np.meshgrid(theta, radios)
+
+    X = S * np.cos(T)
+    Y = S * np.sin(T)
+    Z = (H / R**2) * S**2
+
+    fig = plt.figure(figsize=(9, 7))
+    ax = fig.add_subplot(111, projection="3d")
+
+    ax.plot_surface(
+        X, Y, Z,
+        color="#A7ADB4",
+        alpha=0.30,
+        linewidth=0.25,
+        edgecolor="gray"
+    )
+
+    if h > 0:
+        radios_h = np.linspace(0, r_agua, 32)
+        Th, Sh = np.meshgrid(theta, radios_h)
+
+        Xh = Sh * np.cos(Th)
+        Yh = Sh * np.sin(Th)
+        Zh = (H / R**2) * Sh**2
+
+        ax.plot_surface(
+            Xh, Yh, Zh,
+            color="#5B9BD5",
+            alpha=0.48,
+            linewidth=0
+        )
+
+        Tw, Sw = np.meshgrid(theta, radios_h)
+        Xw = Sw * np.cos(Tw)
+        Yw = Sw * np.sin(Tw)
+        Zw = np.full_like(Xw, h)
+
+        ax.plot_surface(
+            Xw, Yw, Zw,
+            color="#5B9BD5",
+            alpha=0.70,
+            linewidth=0
+        )
+
+        ax.plot(
+            r_agua * np.cos(theta),
+            r_agua * np.sin(theta),
+            np.full_like(theta, h),
+            color="#1F5D91",
+            linewidth=2
+        )
+
+    # Borde superior
     ax.plot(
-        r_agua * np.cos(theta),
-        r_agua * np.sin(theta),
-        np.full_like(theta, h),
-        color="#1F5D91",
+        R * np.cos(theta),
+        R * np.sin(theta),
+        np.full_like(theta, H),
+        color="black",
         linewidth=2
     )
 
-# Borde superior del reservorio
-ax.plot(
-    R * np.cos(theta),
-    R * np.sin(theta),
-    np.full_like(theta, H),
-    color="black",
-    linewidth=2
-)
+    # Referencia vertical
+    x_ref = R * 1.12
 
-# Referencia vertical de altura
-x_ref = R * 1.12
+    ax.plot(
+        [x_ref, x_ref], [0, 0], [0, H],
+        color="black",
+        linewidth=1.5
+    )
 
-ax.plot(
-    [x_ref, x_ref], [0, 0], [0, H],
-    color="black",
-    linewidth=1.5
-)
+    ax.scatter(
+        [x_ref], [0], [h],
+        color="#1F5D91",
+        s=40
+    )
 
-ax.scatter(
-    [x_ref], [0], [h],
-    color="#1F5D91",
-    s=40
-)
+    ax.set_title(f"Nivel actual: {h:.2f} m")
+    ax.set_xlabel("X (m)")
+    ax.set_ylabel("Y (m)")
+    ax.set_zlabel("Altura (m)")
 
-ax.set_title(f"Nivel actual: {h:.2f} m")
-ax.set_xlabel("X (m)")
-ax.set_ylabel("Y (m)")
-ax.set_zlabel("Altura (m)")
+    ax.set_xlim(-R, R * 1.4)
+    ax.set_ylim(-R, R)
+    ax.set_zlim(0, H * 1.25)
+    ax.set_box_aspect((2.4 * R, 2 * R, 1.25 * H))
+    ax.view_init(elev=25, azim=-55)
 
-ax.set_xlim(-R, R * 1.4)
-ax.set_ylim(-R, R)
-ax.set_zlim(0, H * 1.25)
-ax.set_box_aspect((2.4 * R, 2 * R, 1.25 * H))
-ax.view_init(elev=25, azim=-55)
+    st.pyplot(fig, width="stretch")
+    plt.close(fig)
 
-st.pyplot(fig, width="stretch")
-plt.close(fig)
+    # Gráficas de comportamiento
+    st.subheader("Relaciones entre el nivel y los resultados")
 
-# 7. Gráficas de comportamiento
+    niveles = np.linspace(0, H, 250)
+    volumenes = volumen_restante(niveles)
+    trabajos = trabajo_acumulado(niveles) / 1000
 
-st.subheader("Relaciones entre el nivel y los resultados")
+    col_v, col_w = st.columns(2)
 
-niveles = np.linspace(0, H, 250)
-volumenes = volumen_restante(niveles)
-trabajos = trabajo_acumulado(niveles) / 1000
+    with col_v:
+        fig_v, ax_v = plt.subplots(figsize=(6, 4))
 
-col_v, col_w = st.columns(2)
+        ax_v.plot(niveles, volumenes)
+        ax_v.scatter([h], [V], color="red", zorder=3)
 
-with col_v:
-    fig_v, ax_v = plt.subplots(figsize=(6, 4))
+        ax_v.set_title("Volumen restante")
+        ax_v.set_xlabel("Nivel del agua h (m)")
+        ax_v.set_ylabel("Volumen (m³)")
+        ax_v.grid(True, alpha=0.3)
 
-    ax_v.plot(niveles, volumenes)
-    ax_v.scatter([h], [V], color="red", zorder=3)
+        st.pyplot(fig_v, width="stretch")
+        plt.close(fig_v)
 
-    ax_v.set_title("Volumen restante")
-    ax_v.set_xlabel("Nivel del agua h (m)")
-    ax_v.set_ylabel("Volumen (m³)")
-    ax_v.grid(True, alpha=0.3)
+    with col_w:
+        fig_w, ax_w = plt.subplots(figsize=(6, 4))
 
-    st.pyplot(fig_v, width="stretch")
-    plt.close(fig_v)
+        ax_w.plot(niveles, trabajos)
+        ax_w.scatter([h], [W / 1000], color="red", zorder=3)
 
-with col_w:
-    fig_w, ax_w = plt.subplots(figsize=(6, 4))
+        ax_w.set_title("Trabajo acumulado")
+        ax_w.set_xlabel("Nivel actual h (m)")
+        ax_w.set_ylabel("Trabajo (kJ)")
+        ax_w.grid(True, alpha=0.3)
 
-    ax_w.plot(niveles, trabajos)
-    ax_w.scatter([h], [W / 1000], color="red", zorder=3)
+        st.pyplot(fig_w, width="stretch")
+        plt.close(fig_w)
 
-    ax_w.set_title("Trabajo acumulado")
-    ax_w.set_xlabel("Nivel actual h (m)")
-    ax_w.set_ylabel("Trabajo (kJ)")
-    ax_w.grid(True, alpha=0.3)
 
-    st.pyplot(fig_w, width="stretch")
-    plt.close(fig_w)
-
+mostrar_reservorio()
 # 8. Modelo y supuestos
 
 with st.expander("Consultar el modelo matemático"):
