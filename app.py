@@ -57,7 +57,57 @@ st.markdown(
     "Modifica el nivel del agua para observar cómo cambian "
     "la geometría, el volumen restante y el trabajo acumulado."
 )
+# 3.5. Controles de animación
 
+if "vaciado_en_marcha" not in st.session_state:
+    st.session_state["vaciado_en_marcha"] = False
+
+
+def iniciar_vaciado():
+    st.session_state["vaciado_en_marcha"] = True
+
+
+def pausar_vaciado():
+    st.session_state["vaciado_en_marcha"] = False
+
+
+def reiniciar_vaciado():
+    st.session_state["vaciado_en_marcha"] = False
+    st.session_state["nivel_agua_anim"] = float(H)
+
+
+st.subheader("Controles de vaciado")
+
+col_inicio, col_pausa, col_reinicio = st.columns(3)
+
+with col_inicio:
+    st.button(
+        "▶ Iniciar",
+        on_click=iniciar_vaciado,
+        key="btn_iniciar_vaciado"
+    )
+
+with col_pausa:
+    st.button(
+        "⏸ Pausar",
+        on_click=pausar_vaciado,
+        key="btn_pausar_vaciado"
+    )
+
+with col_reinicio:
+    st.button(
+        "↺ Reiniciar",
+        on_click=reiniciar_vaciado,
+        key="btn_reiniciar_vaciado"
+    )
+
+if st.session_state["vaciado_en_marcha"]:
+    st.info(
+        "Control activado. El movimiento automático "
+        "se conectará en el siguiente paso."
+    )
+else:
+    st.caption("Estado: pausado.")
 # 4. Control interactivo del nivel
 
 if "nivel_agua_anim" not in st.session_state:
