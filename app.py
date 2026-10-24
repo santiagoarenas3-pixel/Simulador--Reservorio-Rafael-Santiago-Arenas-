@@ -117,7 +117,7 @@ with col3:
 # Animación automática del nivel del agua
 if st.session_state["vaciado_en_marcha"]:
     st_autorefresh(
-        interval=180,
+        interval=1000,
         key="refresco_vaciado"
     )
 
