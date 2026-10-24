@@ -347,7 +347,72 @@ def mostrar_reservorio():
 
         st.pyplot(fig_w, width="stretch")
         plt.close(fig_w)
+        
+    # 7.1. Análisis matemático del estado actual
 
+    st.subheader("Análisis matemático del estado actual")
+
+    fraccion_altura = h / H
+    fraccion_volumen = V / V_total
+    fraccion_extraido = V_extraido / V_total
+
+    with st.expander(
+        "Interpretar los resultados matemáticamente",
+        expanded=True
+    ):
+        st.markdown("### 1. Relación entre altura y volumen")
+
+        st.latex(
+            r"\frac{V(h)}{V_{\text{total}}}"
+            r"=\left(\frac{h}{H}\right)^2"
+        )
+
+        st.write(
+            f"El agua está al {100 * fraccion_altura:.1f}% "
+            f"de la altura total."
+        )
+
+        st.write(
+            f"Permanece el {100 * fraccion_volumen:.1f}% "
+            f"del volumen original, equivalente a "
+            f"{V:.2f} m³."
+        )
+
+        st.write(
+            f"Se ha extraído el {100 * fraccion_extraido:.1f}% "
+            f"del volumen, equivalente a "
+            f"{V_extraido:.2f} m³."
+        )
+
+        st.markdown("### 2. Trabajo ideal de bombeo")
+
+        st.latex(
+            r"W(h)=\frac{\rho g\pi R^2}{H}"
+            r"\left(\frac{H^3}{6}"
+            r"-\frac{Hh^2}{2}+\frac{h^3}{3}\right)"
+        )
+
+        st.write(
+            f"El trabajo ideal acumulado hasta el nivel actual "
+            f"es de {W / 1000:.2f} kJ."
+        )
+
+        st.write(
+            "A medida que baja el nivel, aumenta el trabajo "
+            "acumulado porque se ha extraído una mayor cantidad "
+            "de agua y se la ha elevado hasta el borde del "
+            "reservorio."
+        )
+
+        st.markdown("### 3. Interpretación física")
+
+        st.write(
+            "El modelo supone densidad constante del agua, "
+            "geometría parabólica ideal y ausencia de pérdidas "
+            "hidráulicas y eléctricas. El trabajo calculado es "
+            "energía mecánica ideal, no el consumo eléctrico "
+            "real de una bomba."
+        )
 
 mostrar_reservorio()
 # 8. Modelo y supuestos
