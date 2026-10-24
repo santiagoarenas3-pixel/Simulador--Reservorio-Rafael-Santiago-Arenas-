@@ -2,6 +2,8 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
+import io
 
 # ==========================================
 # SIMULADOR DE RESERVORIO PARABÓLICO
@@ -443,7 +445,62 @@ st.caption(
     "Dimensiones del modelo: radio 3 m y altura 2 m."
 )
 
+# ==========================================
+# 9. DESCARGA DE RESULTADOS EN CSV
+# ==========================================
 
+def generar_csv_resultados():
+    # 41 niveles entre 0 y H, separados por 0.05 m
+    alturas = np.linspace(0.0, H, 41)
+
+    salida = io.StringIO(newline="")
+    escritor = csv.writer(salida, delimiter=";")
+
+    # Encabezados de la tabla
+    escritor.writerow([
+        "Altura del agua h (m)",
+        "Radio de la superficie (m)",
+        "Volumen restante (m3)",
+        "Llenado (%)",
+        "Volumen extraido (m3)",
+        "Trabajo acumulado (kJ)"
+    ])
+
+    # Calcular resultados para cada altura
+    for altura in alturas:
+        radio = float(radio_superficie(altura))
+        volumen = float(volumen_restante(altura))
+        llenado = float(porcentaje_lleno(altura))
+        trabajo = float(trabajo_acumulado(altura))
+        volumen_extraido = max(0.0, V_total - volumen)
+
+        escritor.writerow([
+            f"{altura:.2f}",
+            f"{radio:.4f}",
+            f"{volumen:.4f}",
+            f"{llenado:.2f}",
+            f"{volumen_extraido:.4f}",
+            f"{trabajo / 1000:.4f}"
+        ])
+
+    # Facilitar la lectura de caracteres españoles en Excel
+    return "\ufeff" + salida.getvalue()
+
+
+st.subheader("Datos y exportación")
+
+st.markdown(
+    "Descarga los resultados matemáticos del reservorio "
+    "para analizarlos en Excel o utilizarlos en el informe."
+)
+
+st.download_button(
+    label="⬇ Descargar resultados en CSV",
+    data=generar_csv_resultados(),
+    file_name="resultados_reservorio_parabolico.csv",
+    mime="text/csv",
+    key="descargar_resultados_csv"
+)
 st.caption(
     "Proyecto académico de Cálculo Integral. "
     "Dimensiones del modelo: radio 3 m y altura 2 m."
