@@ -259,25 +259,7 @@ st.caption(
     "Dimensiones del modelo: radio 3 m y altura 2 m."
 )
 
-# ==========================================
-# PRUEBA TEMPORAL DE ACTUALIZACIÓN AUTOMÁTICA
-# ==========================================
 
-if "contador_prueba_fragmento" not in st.session_state:
-    st.session_state["contador_prueba_fragmento"] = 0
-
-
-@st.fragment(run_every="2s")
-def prueba_fragmento():
-    st.session_state["contador_prueba_fragmento"] += 1
-
-    st.caption(
-        "Prueba de actualización automática: "
-        f"{st.session_state['contador_prueba_fragmento']}"
-    )
-
-
-prueba_fragmento()
 st.caption(
     "Proyecto académico de Cálculo Integral. "
     "Dimensiones del modelo: radio 3 m y altura 2 m."
