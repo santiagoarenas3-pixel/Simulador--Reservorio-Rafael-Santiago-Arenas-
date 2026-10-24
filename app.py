@@ -462,7 +462,7 @@ def generar_csv_resultados():
         "Radio de la superficie (m)",
         "Volumen restante (m3)",
         "Llenado (%)",
-        "Volumen extraido (m3)",
+        "Agua extraida (m3)",
         "Trabajo acumulado (kJ)"
     ])
 
@@ -479,7 +479,7 @@ def generar_csv_resultados():
             f"{radio:.4f}",
             f"{volumen:.4f}",
             f"{llenado:.2f}",
-            f"{agua_extraida:.4f}",
+            f"{volumen_extraido:.4f}",
             f"{trabajo / 1000:.4f}"
         ])
 
