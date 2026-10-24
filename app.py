@@ -123,7 +123,7 @@ if st.session_state["vaciado_en_marcha"]:
 
     nuevo_nivel = (
         float(st.session_state["nivel_agua_anim"])
-        - float(H) / 80
+        - float(H) / 35
     )
 
     st.session_state["nivel_agua_anim"] = max(
