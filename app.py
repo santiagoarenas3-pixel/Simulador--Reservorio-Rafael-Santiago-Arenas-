@@ -34,10 +34,11 @@ def porcentaje_lleno(h):
 
 
 def trabajo_acumulado(h):
-    return (
+    W = (
         rho * g * np.pi * R**2 / H
         * (H**3 / 6 - H * h**2 / 2 + h**3 / 3)
     )
+    return max(0.0, W)
 
 
 V_total = np.pi * R**2 * H / 2
