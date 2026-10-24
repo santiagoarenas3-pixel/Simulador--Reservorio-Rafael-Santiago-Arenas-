@@ -271,15 +271,41 @@ def mostrar_reservorio():
         s=40
     )
 
-    ax.set_title(f"Nivel actual: {h:.2f} m")
-    ax.set_xlabel("X (m)")
-    ax.set_ylabel("Y (m)")
-    ax.set_zlabel("Altura (m)")
+    # Estilo visual del modelo 3D
+    fig.patch.set_facecolor("#F7FAFC")
+    ax.set_facecolor("#F7FAFC")
 
+    ax.set_title(
+        f"Reservorio parabólico — nivel: {h:.2f} m",
+        pad=16,
+        fontsize=13,
+        fontweight="bold"
+    )
+
+    ax.set_xlabel("X (m)", labelpad=8)
+    ax.set_ylabel("Y (m)", labelpad=8)
+    ax.set_zlabel("Altura (m)", labelpad=8)
+
+    # Planos suaves y bordes discretos
+    for pane in (ax.xaxis.pane, ax.yaxis.pane, ax.zaxis.pane):
+        pane.set_facecolor((0.91, 0.95, 0.98, 0.35))
+        pane.set_edgecolor("#CBD5E1")
+
+    # Cuadrícula y etiquetas
+    ax.grid(
+        True,
+        linestyle=":",
+        linewidth=0.6,
+        alpha=0.35
+    )
+    ax.tick_params(axis="both", labelsize=8, pad=0)
+
+    # Proporciones y perspectiva
     ax.set_xlim(-R, R * 1.4)
     ax.set_ylim(-R, R)
     ax.set_zlim(0, H * 1.25)
     ax.set_box_aspect((2.4 * R, 2 * R, 1.25 * H))
+    ax.set_proj_type("ortho")
     ax.view_init(elev=25, azim=-55)
 
     st.pyplot(fig, width="stretch")
