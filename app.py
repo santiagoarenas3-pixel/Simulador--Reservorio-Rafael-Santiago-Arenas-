@@ -170,6 +170,7 @@ def mostrar_reservorio():
     V = volumen_restante(h)
     llenado = porcentaje_lleno(h)
     extraido = 100 - llenado
+    V_extraido = max(0.0, V_total - V)
     W = trabajo_acumulado(h)
 
     # Indicadores numéricos
@@ -180,12 +181,13 @@ def mostrar_reservorio():
     c3.metric("Volumen restante", f"{V:.2f} m³")
     c4.metric("Trabajo acumulado", f"{W / 1000:.2f} kJ")
 
-    st.progress(float(np.clip(llenado / 100, 0, 1)))
+    st.progress(float(np.clip(extraido / 100, 0, 1)))
 
     st.caption(
-        f"Llenado: {llenado:.1f}% | "
-        f"Agua extraída: {extraido:.1f}% | "
-        f"Capacidad total: {V_total:.2f} m³"
+        f"Vaciado: {extraido:.1f}% | "
+        f"Volumen extraído: {V_extraido:.2f} m³ | "
+        f"Volumen restante: {V:.2f} m³ | "
+        f"Llenado: {llenado:.1f}%"
     )
 
     # Modelo tridimensional
